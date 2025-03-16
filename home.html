@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relationship Timeline</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FFCDC2;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .title {
+            font-weight: bold;
+            font-size: 24px;
+            color: #000;
+        }
+        
+        .heart-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 0;
+            cursor: pointer;
+        }
+        
+        .heart svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .months-text {
+            position: absolute;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            width: 100%;
+            text-align: center;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .days-circle {
+            position: absolute;
+            top: 0;
+            left: 20px;
+            background-color: white;
+            color: black;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            line-height: 1.2;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .days-number {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float 3s ease-in forwards;
+            opacity: 0;
+            z-index: 20;
+            pointer-events: none;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+        
+        .pics-box {
+            background-color: #E57373;
+            border-radius: 10px;
+            padding: 40px 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-style: italic;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .menu-item {
+            background-color: #E57373;
+            border-radius: 10px;
+            padding: 20px 10px;
+            text-align: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-height: 80px;
+        }
+        
+        .chat-icon {
+            position: relative;
+            width: 30px;
+            height: 24px;
+            background-color: white;
+            border-radius: 5px;
+            margin-bottom: 8px;
+        }
+        
+        .chat-icon:after {
+            content: "";
+            position: absolute;
+            bottom: -6px;
+            left: 5px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid white;
+        }
+        
+        .chat-smile {
+            position: absolute;
+            bottom: 5px;
+            left: 7px;
+            font-size: 12px;
+            color: black;
+        }
+        
+        .love-card-icon {
+            position: relative;
+            width: 30px;
+            height: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .love-card-white {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+        }
+        
+        .love-card-black {
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            width: 18px;
+            height: 16px;
+            background-color: black;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        }
+        
+        .camera-icon {
+            width: 30px;
+            height: 22px;
+            background-color: #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        
+        .camera-lens {
+            width: 10px;
+            height: 10px;
+            background-color: #555;
+            border-radius: 50%;
+            position: absolute;
+            top: 6px;
+            left: 10px;
+        }
+        
+        .emoji-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .emoji-container {
+            position: relative;
+            width: 80%;
+            height: 80%;
+        }
+        
+        .floating-emoji {
+            position: absolute;
+            font-size: 36px;
+            animation: floatEmoji 4s ease-in-out infinite;
+        }
+        
+        @keyframes floatEmoji {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-100px) rotate(20deg);
+            }
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 101;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">We've Been Together For</div>
+        </div>
+        
+        <div class="heart-container" id="heartContainer">
+            <div class="heart" id="heartClickArea">
+                <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100,30 C60,10 0,40 0,100 C0,140 40,170 100,180 C160,170 200,140 200,100 C200,40 140,10 100,30 Z" fill="#e74c3c"/>
+                </svg>
+            </div>
+            <div class="months-text">10 Months</div>
+            <div class="days-circle">
+                <span class="days-number">304</span>
+                <span>Days</span>
+            </div>
+        </div>
+        
+    <div class="pics-box" id="picsBox" onclick="showImage()">
+    Pics of us together
+</div>
+
+<!-- Hidden Image -->
+<img id="coupleImage" src="artofsey.jpeg" alt="Pics of us together" style="display: none; width: 100%; max-width: 400px; margin-top: 10px; border-radius: 10px;">
+
+<script>
+    function showImage() {
+        document.getElementById("coupleImage").style.display = "block";
+    }
+</script>
+
+        
+        <div class="menu-grid">
+            <a href="babis-message.html" class="menu-item">
+                <div class="chat-icon">
+                    <span class="chat-smile">:)</span>
+                </div>
+                <span>Babi's Message</span>
+            </a>
+            <a href="love-cards.html" class="menu-item">
+                <div class="love-card-icon">
+                    <div class="love-card-white"></div>
+                    <div class="love-card-black"></div>
+                </div>
+                <span>Love Cards</span>
+            </a>
+            <a href="pictures.html" class="menu-item">
+                <div class="camera-icon">
+                    <div class="camera-lens"></div>
+                </div>
+                <span>Pictures</span>
+            </a>
+            <a href="" class="menu-item">
+                <span></span>
+                <span></span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="emoji-overlay" id="emojiOverlay">
+        <div class="close-button" id="closeButton">X</div>
+        <div class="emoji-container" id="emojiContainer"></div>
+    </div>
+    
+    <script>
+        // Generate a random position within the container
+        function randomPosition(container) {
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
+            return {
+                left: Math.random() * (width - 50),
+                top: Math.random() * (height - 50)
+            };
+        }
+        
+        // Heart effect when clicking on the heart
+        const heartClickArea = document.getElementById('heartClickArea');
+        const heartContainer = document.getElementById('heartContainer');
+        
+        heartClickArea.addEventListener('click', function() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'floating-heart';
+                    heart.innerHTML = '❤️';
+                    heart.style.left = (Math.random() * 150) + 'px';
+                    heart.style.top = (Math.random() * 30) + 'px';
+                    heartContainer.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 3000);
+                }, i * 100);
+            }
+        });
+        
+        // Show emoji overlay when clicking on pics box
+        const picsBox = document.getElementById('picsBox');
+        const emojiOverlay = document.getElementById('emojiOverlay');
+        const emojiContainer = document.getElementById('emojiContainer');
+        const closeButton = document.getElementById('closeButton');
+        
+        const loveEmojis = ['❤️', '😍', '🥰', '💕', '💘', '💖', '💗', '💓', '💞', '💝', '💟', '💑', '👩‍❤️‍👨', '👫', '🌹', '💏'];
+        
+        picsBox.addEventListener('click', function() {
+            emojiOverlay.style.display = 'flex';
+            emojiContainer.innerHTML = '';
+            
+            for (let i = 0; i < 30; i++) {
+                const emoji = document.createElement('div');
+                emoji.className = 'floating-emoji';
+                emoji.textContent = loveEmojis[Math.floor(Math.random() * loveEmojis.length)];
+                
+                const position = randomPosition(emojiContainer);
+                emoji.style.left = position.left + 'px';
+                emoji.style.top = position.top + 'px';
+                emoji.style.animationDelay = (Math.random() * 2) + 's';
+                
+                emojiContainer.appendChild(emoji);
+            }
+        });
+        
+        closeButton.addEventListener('click', function() {
+            emojiOverlay.style.display = 'none';
+        });
+        
+        // Just for this mockup: Create placeholder pages for the links
+        function createPlaceholderPage(title) {
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${title}</title>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            background-color: #FFCDC2;
+                            margin: 0;
+                            padding: 20px;
+                            text-align: center;
+                        }
+                        h1 {
+                            color: #E74C3C;
+                        }
+                        .back-button {
+                            background-color: #E57373;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            margin-top: 20px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>${title}</h1>
+                    <p>This is the ${title} page.</p>
+                    <button class="back-button" onclick="window.history.back()">Back to Home</button>
+                </body>
+                </html>
+            `;
+        }
+        
+        // In a real implementation, these would be separate files
+        // For this example, we're creating them dynamically when linked
+        const pages = {
+            'babis-message.html': createPlaceholderPage("Babi's Message"),
+            'love-cards.html': createPlaceholderPage("Love Cards"),
+            'pictures.html': createPlaceholderPage("Pictures")
+        };
+                
+        // Override link behavior for demonstration
+        document.querySelectorAll('.menu-item').forEach(item => {
+            const href = item.getAttribute('href');
+            if (href && href !== 'babis-message.html') {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (pages[href]) {
+                        const newWindow = window.open('love-cards.html''pictures.html');
+   newWindow.document.write(pages[href]);
+                    }
+                });
+            }
+        });
+        
+    </script>
+</body>
+</html>
